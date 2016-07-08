@@ -37,9 +37,12 @@
   command: rsync -piu "{{ local_release_dir }}/calico/bin/calico" "/opt/cni/bin/calico-ipam"
   changed_when: false
 
-- name: Calico | wait for etcd
-  wait_for:
-    port: 2379
+- name: wait for etcd up
+  uri: url=http://localhost:2379/health
+  register: result
+  until: result.status == 200
+  retries: 10
+  delay: 5
   when: inventory_hostname in groups['kube-master']
 
 - name: Calico | Check if calico network pool has already been configured
