@@ -28,12 +28,12 @@
   when: use_hyperkube_cni
 
 - name: Calico | Install calico cni bin
-  command: rsync -piu "{{ local_release_dir }}/calico/bin/calico" "/opt/cni/bin/calico"
+  command: rsync -pi "{{ local_release_dir }}/calico/bin/calico" "/opt/cni/bin/calico"
   changed_when: false
   when: not use_hyperkube_cni or overwrite_cni
 
 - name: Calico | Install calico-ipam cni bin
-  command: rsync -piu "{{ local_release_dir }}/calico/bin/calico" "/opt/cni/bin/calico-ipam"
+  command: rsync -pi "{{ local_release_dir }}/calico/bin/calico" "/opt/cni/bin/calico-ipam"
   changed_when: false
   when: not use_hyperkube_cni or overwrite_cni
 
