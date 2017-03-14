@@ -20,6 +20,11 @@ global_as_num: "64512"
 # defaults. The value should be a number, not a string.
 # calico_mtu: 1500
 
+# Name of defaul Calico profile which allows all traffic. Policies take
+# precedence over profiles, so any k8s policy configured by the user
+# will override our default profile.
+calico_default_profile_name: "calico-k8s-network"
+
 # Limits for apps
 calico_node_memory_limit: 500M
 calico_node_cpu_limit: 300m

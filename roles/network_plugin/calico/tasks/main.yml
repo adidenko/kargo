@@ -250,3 +250,35 @@
   when: (legacy_calicoctl and
          peer_with_calico_rr|default(false) and inventory_hostname in groups['k8s-cluster']
          and hostvars[item]['cluster_id'] == cluster_id)
+
+- name: Calico | Get profiles
+  shell: "{{ bin_dir }}/calicoctl get profile"
+  register: calico_profiles
+  when: (not legacy_calicoctl
+         and (enable_network_policy is defined and enable_network_policy == True))
+  run_once: true
+
+- name: Calico | Configure default profile
+  shell: >
+   echo '{
+   - apiVersion: v1
+     kind: profile
+     metadata:
+       name: {{ calico_default_profile_name }}
+       tags:
+       - calico-k8s-network
+     spec:
+       egress:
+       - action: allow
+         destination: {}
+         source: {}
+       ingress:
+       - action: allow
+         destination: {}
+         source: {}
+   }'
+   | {{ bin_dir }}/calicoctl create --skip-exists -f -
+  when: (not legacy_calicoctl
+         and (enable_network_policy is defined and enable_network_policy == True)
+         and calico_profiles.stdout.find("{{ calico_default_profile_name }}") == -1)
+  run_once: true
